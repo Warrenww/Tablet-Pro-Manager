@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+  <title>Layout Editor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+  <link rel="stylesheet" href="./main.css">
+</head>
+<body>
+  <nav>
+    <div id="fileName">Untitle.ini </div>
+    <div class='action button' id="openFile" onclick="loadFile()"> L<span>o</span>ad <i class="fas fa-upload"></i> </div>
+    <div class='action button' onclick="showHidePanel('layout')"> <span>L</span>ayout <i class="fas fa-columns"></i> </div>
+    <div class='action button' onclick="showHidePanel('layer')"> <span>L</span>ayer <i class="fas fa-layer-group"></i> </div>
+    <div class='action button' onclick="saveFile()"> Download <i class="fas fa-download"></i> </div>
+  </nav>
+  <div class="side" id="layoutPanel">
+    <div id="floatpad">Float</div>
+    <div id="leftpad">Left</div>
+    <div id="rightpad">Right</div>
+    <div id="toppad">Top</div>
+    <div id="bottompad">bottom</div>
+    <div id="fullscreen">Fullscreen</div>
+    <div id="fullscreen_with_btns_horz">Fullscreen horz with button</div>
+    <div id="fullscreen_with_btns_vert">Fullscreen vert with button</div>
+    <div id="virtualctrls">Assist</div>
+    <div id="ArtistPad">Artist L</div>
+    <div id="ArtistPad_Medium">Artist M</div>
+    <div id="ArtistPad_Small">Artist S</div>
+  </div>
+
+  <div class="side" id="layerPanel"> </div>
+  <div id="canvas">
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"> </script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="./jquery.ui.touch-punch.js"></script>
+  <script src="./main.js"> </script>
+</body>

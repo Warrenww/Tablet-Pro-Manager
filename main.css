@@ -1,0 +1,179 @@
+html,body{
+  --transWhite: rgba(255,255,255,.7);
+  margin:0 ;
+  min-height:100vh;
+  background:linear-gradient(120deg, #2e282f, #41424e);
+  overflow-x:hidden;
+  font-family: monospace;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  user-select: none;
+}
+body::-webkit-scrollbar,
+.side::-webkit-scrollbar
+{ width: 0;}
+nav{
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  display: flex;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  background: var(--transWhite);
+  height: 50px;
+  padding: 5px 20px;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0px 1px 10px #111;
+}
+nav .action,
+#fileName{
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  border: 1px solid #333;
+  border-radius: 10px;
+  font-size: 20px;
+}
+nav .action:hover{
+  background: #888
+}
+nav .action span{text-decoration: underline;}
+input{
+  background: rgba(255,255,255,.8);
+  border-radius: 2rem;
+  border: 0;
+  outline: none;
+  padding: 5px 10px;
+  max-width: 100%;
+}
+#fileName{
+  border: 0;
+  max-width: 150px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: .3s ease-in-out;
+}
+#fileName:hover{
+  max-width: 100vw;
+}
+.side{
+  --width: 200px;
+  height: calc(100vh - 80px);
+  padding-top: 80px;
+  overflow-y:scroll;
+  position: fixed;
+  top:0;
+  left: calc(var(--width) * -1);
+  width: var(--width);
+  background: var(--transWhite);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  transition: .3s ease-in-out;
+  z-index: 20;
+  scroll-behavior: smooth;
+  padding-left: 0;
+}
+.side.active{ left:0 }
+.side div{
+  padding: 5px 20px;
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+}
+.side>div:hover,
+.side>div.active
+{ background-color: #aaa; }
+#layerPanel{--width: 300px;font-weight: 900}
+#layerPanel>div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#layerPanel>div::after{
+  content: '\f107';
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  transition:  .3s ease-in-out;
+}
+#layerPanel>div.active::after{
+  transform: rotate(180deg);
+}
+#layerPanel>div .toggle{
+  display: flex;
+  flex-direction: column;
+  max-height: 0;
+  overflow: hidden;
+  transition: .3s ease-in-out;
+  width: 100%;
+}
+#layerPanel>div .toggle div{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap:  wrap;
+}
+
+#layerPanel>div.active .toggle{
+  max-height: 300px;
+}
+#layerPanel .handle{
+  width: 0;
+  background: #999;
+  height: calc(100% - 10px);
+  position: absolute;
+  left: 0;
+  top: 5px;
+  cursor: move;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: .3s ease-in-out;
+  z-index: 10;
+}
+#layerPanel .handle::after{
+  content: '\f0b2';
+  font-family: 'Font Awesome 5 Free';
+  font-weight : 900;
+}
+#layerPanel .active .handle{
+  width: 30px;
+}
+#canvas{
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 80px);
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+  position: relative;
+}
+#canvas #panel{
+  background-color: #111;
+  position: relative;
+  box-shadow: 5px 5px 20px #111;
+}
+#canvas #panel .tile{
+  position: absolute;
+  display: flex;
+  background: #333;
+  transform: scale(.9);
+  border-radius: 7px;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  overflow-wrap: anywhere;
+  padding: 5px;
+  font-weight: 900;
+  cursor: pointer;
+}
+#canvas #panel .tile.focus{
+  box-shadow: 0px 0px 10px #fff;
+  z-index: 2;
+}
