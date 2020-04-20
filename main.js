@@ -1,4 +1,4 @@
-var Layout, currentLayout, currentLayoutName;
+var Layout, currentLayout, currentLayoutName, history;
 
 const FunctionMap = ['','','ctrl','shift','alt','oneMoreSec','toggle','win','textColor','bgColor'];
 const InstrName = (s) => {
@@ -167,10 +167,11 @@ function renderLayout(layout){
         is_icon = /^%uF/.test(displayname);
 
     elem.css({
-      top : (`calc(${Number(tile.y)}%)`) ,
-      left : (`calc(${Number(tile.x)}%)`) ,
-      width : (`calc(${Number(tile.w)}% - 10px)`) ,
-      height : (`calc(${Number(tile.h)}% - 10px)`),
+      top : (`${Number(tile.y)}%`) ,
+      left : (`${Number(tile.x)}%`) ,
+      width : (`${Number(tile.w)}%`) ,
+      height : (`${Number(tile.h)}%`),
+      transform : "scale(.8)",
       "font-family" : (is_icon ? "Font Awesome\\ 5 Free" : "inherit"),
       color: "#" + textColor,
       backgroundColor: "#" + bgColor,
@@ -259,6 +260,25 @@ $("#fileName").click(function(){
   input.click(e => e.stopPropagation());
   $(this).html(input);
   input.focus();
+});
+const prop2css = {
+  x: "left",
+  y: "top",
+  w: "width",
+  h: "height"
+};
+$(document).on("change paste", "#layerPanel .toggle input", function(){
+  let [property, index] = $(this).attr("id").split("_"),
+      value = $(this).val();
+
+  target = $("#canvas #panel .tile.focus");
+  target.css({
+    [prop2css[property]] : value + "%"
+  })
+  currentLayout.tiles[index][property] = value;
+  Layout[currentLayoutName] = currentLayout;
+  localStorage.setItem(currentLayoutName, JSON.stringify(currentLayout));
+  // console.log(property, index, target, value)
 });
 
 $(document).ready(function() {
