@@ -1,4 +1,8 @@
-var Layout, currentLayout, currentLayoutName, history;
+var Layout,
+    currentLayout,
+    currentLayoutName,
+    history,
+    setting = localStorage.getItem("setting") || {snapPos: false};
 
 const FunctionMap = ['','','ctrl','shift','alt','oneMoreSec','toggle','win','textColor','bgColor'];
 const InstrName = (s) => {
@@ -44,6 +48,15 @@ const LayoutName = {
   "ArtistPad_Medium" : "Artist M",
   "ArtistPad_Small" : "Artist S",
 };
+function setSettings (property, value){
+  if(typeof(value) === "object") {
+    if(value.type === "checkbox") value = $(value).prop("checked");
+    else value = $(value).val();
+  }
+  if(setting.hasOwnProperty(property)){
+    setting[property] = value;
+  }
+}
 function parseLayout (row) {
   row = row.split("\n");
   var result = {},
@@ -144,9 +157,10 @@ function saveFile(){
       reader.readAsArrayBuffer(file);
 }
 function showHidePanel(name) {
-  let target = $("#"+name+"Panel");
+  let target = $("#"+name+"Panel"),
+      classes = target.attr("class");
   if(target.is(".active")) target.removeClass("active");
-  else target.addClass("active").siblings(".side").removeClass("active");
+  else target.addClass("active").siblings("."+classes.split(" ")[0]).removeClass("active");
 }
 function renderLayout(layout){
   currentLayout = layout;
@@ -200,6 +214,34 @@ function renderLayout(layout){
     `);
   });
   $("#canvas").append(panel);
+  let canvas_width_grid = $("#canvas #panel").width() / 100 ,
+      canvas_height_grid = $("#canvas #panel").height() / 100 ;
+  $("#canvas #panel .tile").draggable({
+    containment: "parent",
+    drag: (e, ui) => {
+      let a = setting.snapPos ? 5 : 1;
+      ui.position.left = Math.ceil(ui.position.left / canvas_width_grid / a) * canvas_width_grid * a;
+      ui.position.top = Math.ceil(ui.position.top / canvas_height_grid / a) * canvas_height_grid * a;
+      let left = ui.position.left / canvas_width_grid,
+          top = ui.position.top / canvas_height_grid;
+      $("#layerPanel .active .toggle input[id^='x_']").val(left);
+      $("#layerPanel .active .toggle input[id^='y_']").val(top);
+    },
+    stop: (e, ui) => {
+      let x = $("#layerPanel .active .toggle input[id^='x_']").val(),
+          y = $("#layerPanel .active .toggle input[id^='y_']").val(),
+          index = $(e.target).attr("id");
+
+      $(this).css({
+        top : x + "%",
+        left : y + "%"
+      })
+      currentLayout.tiles[index].x = x;
+      currentLayout.tiles[index].y = y;
+      Layout[currentLayoutName] = currentLayout;
+      localStorage.setItem(currentLayoutName, JSON.stringify(currentLayout));
+    },
+  });
 }
 
 $(document).on("keydown", function(e){
@@ -221,6 +263,11 @@ $(document).on("keydown", function(e){
     e.stopPropagation();
     saveFile();
   }
+  if(e.key === 'i' && e.ctrlKey){
+    e.preventDefault();
+    e.stopPropagation();
+    showHidePanel("settings");
+  }
 
 });
 $(document).on("click touchend","#layerPanel>div",function(){
@@ -229,7 +276,7 @@ $(document).on("click touchend","#layerPanel>div",function(){
   $(this).addClass("active").siblings().removeClass("active");
   $("#canvas #panel #"+tile_id).addClass("focus").siblings(".tile").removeClass("focus");
 });
-$(document).on("click touchend","#canvas #panel .tile",function(){
+$(document).on("mousedown touchstart","#canvas #panel .tile",function(){
   var tile_id = $(this).attr('id');
       tile = currentLayout.tiles[tile_id];
   $(this).addClass("focus").siblings().removeClass("focus");

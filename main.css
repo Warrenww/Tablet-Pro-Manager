@@ -10,7 +10,8 @@ html,body{
   user-select: none;
 }
 body::-webkit-scrollbar,
-.side::-webkit-scrollbar
+.side::-webkit-scrollbar,
+.float>div::-webkit-scrollbar
 { width: 0;}
 nav{
   position: fixed;
@@ -59,7 +60,7 @@ input{
 #fileName:hover{
   max-width: 100vw;
 }
-.side{
+.side, .float>div{
   --width: 200px;
   height: calc(100vh - 80px);
   padding-top: 80px;
@@ -86,6 +87,53 @@ input{
 .side>div:hover,
 .side>div.active
 { background-color: #aaa; }
+.float{
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0;
+  transition: .3s ease-in-out;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(5px);
+}
+.float.active{
+  opacity: 1;
+  z-index: 100;
+}
+.float>div{
+  top: -100vh;
+  left: 20vw;
+  height: fit-content;
+  max-height: 50vh;
+  min-height: 100px;
+  width: 60vw;
+  padding: 30px;
+  border-radius: 30px;
+}
+.float.active>div{ top: 15vh; }
+.float>div>div{
+  position:relative;
+  padding: 5px 0;
+}
+.float label .info{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: black;
+  color: white;
+  padding: 5px 20px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: .3s ease-in-out;
+  z-index: -1;
+}
+.float label .fa-question-circle:hover + .info{
+  bottom: -24px;
+  opacity:1;
+}
 #layerPanel{--width: 300px;font-weight: 900}
 #layerPanel>div{
   display: flex;
