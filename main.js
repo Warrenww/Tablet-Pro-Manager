@@ -48,6 +48,27 @@ const LayoutName = {
   "ArtistPad_Medium" : "Artist M",
   "ArtistPad_Small" : "Artist S",
 };
+const LayoutAspectRatio = {
+  "floatpad" : "1,1",
+  "leftpad" : "1,4",
+  "rightpad" : "1,4",
+  "toppad" : "4,1",
+  "bottompad" : "4,1",
+  "fullscreen" : "2,3",
+  "fullscreen_with_btns_horz" : "2,3",
+  "fullscreen_with_btns_vert" : "3,2",
+  "virtualctrls" : "5,4",
+  "ArtistPad" : "1,4",
+  "ArtistPad_Medium" : "1,4",
+  "ArtistPad_Small" : "1,4",
+};
+const prop2css = {
+  x: "left",
+  y: "top",
+  w: "width",
+  h: "height"
+};
+
 function setSettings (property, value){
   if(typeof(value) === "object") {
     if(value.type === "checkbox") value = $(value).prop("checked");
@@ -167,7 +188,7 @@ function renderLayout(layout){
   $("#canvas #panel").remove();
   var [width_lim, height_lim] = [$(document).width()*0.8, ($(document).height() - 50)*0.8];
       panel = $("<div id='panel'></div>"),
-      aspect = (layout.aspect || "1,1").split(","),
+      aspect = (layout.aspect || LayoutAspectRatio[currentLayoutName]).split(","),
       sizeMult = Math.min(width_lim / aspect[0], height_lim / aspect[1]);
 
   var [width, height] = [aspect[0]*sizeMult, aspect[1]*sizeMult];
@@ -270,7 +291,7 @@ $(document).on("keydown", function(e){
   }
 
 });
-$(document).on("click touchend","#layerPanel>div",function(){
+$(document).on("click touchstart","#layerPanel>div",function(){
   var tile_id = $(this).attr("target");
       tile = currentLayout.tiles[tile_id];
   $(this).addClass("active").siblings().removeClass("active");
@@ -308,12 +329,7 @@ $("#fileName").click(function(){
   $(this).html(input);
   input.focus();
 });
-const prop2css = {
-  x: "left",
-  y: "top",
-  w: "width",
-  h: "height"
-};
+
 $(document).on("change paste", "#layerPanel .toggle input", function(){
   let [property, index] = $(this).attr("id").split("_"),
       value = $(this).val();
