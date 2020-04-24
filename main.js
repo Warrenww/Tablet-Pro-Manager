@@ -225,33 +225,38 @@ function renderLayout(layout){
     `);
     $("#layerPanel div[target='"+index+"']").append(`
       <div class='toggle'>
-        <div> <label for='x_${index}'>x : </label> <input type='number' value='${x}' id='x_${index}' /> </div>
-        <div> <label for='y_${index}'>y : </label> <input type='number' value='${y}' id='y_${index}' /> </div>
-        <div> <label for='w_${index}'>w : </label> <input type='number' value='${w}' id='w_${index}' /> </div>
-        <div> <label for='h_${index}'>h : </label> <input type='number' value='${h}' id='h_${index}' /> </div>
+        <div> <label for='x_${index}'>x : </label> <input type='number' min='0' max='100' value='${x}' id='x_${index}' /> </div>
+        <div> <label for='y_${index}'>y : </label> <input type='number' min='0' max='100' value='${y}' id='y_${index}' /> </div>
+        <div> <label for='w_${index}'>w : </label> <input type='number' min='0' max='100' value='${w}' id='w_${index}' /> </div>
+        <div> <label for='h_${index}'>h : </label> <input type='number' min='0' max='100' value='${h}' id='h_${index}' /> </div>
         <div> <label for='textColor_${index}'>textColor : </label> <div class='color' id='textColor_${index}'>${textColor}</div> </div>
         <div> <label for='bgColor_${index}'>bgColor : </label> <div class='color' id='bgColor_${index}'>${bgColor}</div> </div>
       </div>
     `);
   });
   $("#canvas").append(panel);
+  bindTile();
+}
+function bindTile(){
   let canvas_width_grid = $("#canvas #panel").width() / 100 ,
       canvas_height_grid = $("#canvas #panel").height() / 100 ;
   $("#canvas #panel .tile").draggable({
     containment: "parent",
     drag: (e, ui) => {
-      let a = setting.snapPos ? 5 : 1;
+      let a = setting.snapPos ? 5 : 1,
+          index = $(e.target).attr("id");
+
       ui.position.left = Math.ceil(ui.position.left / canvas_width_grid / a) * canvas_width_grid * a;
       ui.position.top = Math.ceil(ui.position.top / canvas_height_grid / a) * canvas_height_grid * a;
       let left = ui.position.left / canvas_width_grid,
           top = ui.position.top / canvas_height_grid;
-      $("#layerPanel .active .toggle input[id^='x_']").val(left);
-      $("#layerPanel .active .toggle input[id^='y_']").val(top);
+      $("#layerPanel .toggle #x_"+index).val(left);
+      $("#layerPanel .toggle #y_"+index).val(top);
     },
     stop: (e, ui) => {
-      let x = $("#layerPanel .active .toggle input[id^='x_']").val(),
-          y = $("#layerPanel .active .toggle input[id^='y_']").val(),
-          index = $(e.target).attr("id");
+      let index = $(e.target).attr("id");
+      let x = $("#layerPanel .toggle #x_"+index).val(),
+          y = $("#layerPanel .toggle #y_"+index).val();
 
       $(this).css({
         top : x + "%",
@@ -291,17 +296,31 @@ $(document).on("keydown", function(e){
   }
 
 });
-$(document).on("click touchstart","#layerPanel>div",function(){
+$(document).on("click","#layerPanel>div",function(){
   var tile_id = $(this).attr("target");
       tile = currentLayout.tiles[tile_id];
-  $(this).addClass("active").siblings().removeClass("active");
-  $("#canvas #panel #"+tile_id).addClass("focus").siblings(".tile").removeClass("focus");
+  if($(this).is(".active")){
+    $(this).removeClass("active");
+    $("#canvas #panel #"+tile_id).removeClass("focus");
+  }
+  else {
+    $(this).addClass("active").siblings().removeClass("active");
+    $("#canvas #panel #"+tile_id).addClass("focus").siblings(".tile").removeClass("focus");
+  }
 });
-$(document).on("mousedown touchstart","#canvas #panel .tile",function(){
+$(document).on("click","#canvas #panel .tile",function(e){
+  // e.preventDefault();
+  e.stopPropagation();
   var tile_id = $(this).attr('id');
       tile = currentLayout.tiles[tile_id];
-  $(this).addClass("focus").siblings().removeClass("focus");
-  $("#layerPanel div[target='"+tile_id+"']").addClass("active").siblings().removeClass("active");
+  if($(this).is(".focus")){
+    $(this).removeClass("focus");
+    $("#layerPanel div[target='"+tile_id+"']").removeClass("active");
+  }
+  else {
+    $(this).addClass("focus").siblings().removeClass("focus");
+    $("#layerPanel div[target='"+tile_id+"']").addClass("active").siblings().removeClass("active");
+  }
   $("#layerPanel").scrollTop($("#layerPanel").scrollTop() - $(document).height() / 2 + $("#layerPanel div[target='"+tile_id+"']").offset().top);
 });
 $("#layoutPanel div").click(function(){
